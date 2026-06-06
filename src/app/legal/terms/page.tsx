@@ -13,8 +13,8 @@ export default function TermsPage() {
 
     const user_id = localStorage.getItem("user_id");
 
-    // TODO: Add your API call here
-    // const res = await fetch("/api/accept-terms", { ... });
+    // TODO: Add your API call here if needed
+    // const res = await fetch("/api/accept-terms", { method: "POST", body: JSON.stringify({ user_id }) });
     // const data = await res.json();
 
     router.push("/compliance/profile");
