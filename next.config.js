@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+export default function AdminPage() {
+  return <div>Admin</div>;
+}
 
 const nextConfig = {
   turbopack: {},
