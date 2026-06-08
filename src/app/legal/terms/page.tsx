@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import termsContent from "@/docs/terms.md";
+import termsContent from "@/docs/terms-content";
 
 export default function TermsPage() {
   const [accepted, setAccepted] = useState(false);
