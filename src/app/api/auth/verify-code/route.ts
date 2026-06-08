@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       LIMIT 1;
     `;
 
-    if (result.(rowCount ?? 0) === 0) {
+    if ((result?.rowCount ?? 0) === 0) {
       return NextResponse.json({ error: "No verification code found" }, { status: 400 });
     }
 
