@@ -1,24 +1,31 @@
-import GitHub from "next-auth/providers/github";
+// src/auth.config.ts
 import Credentials from "next-auth/providers/credentials";
+import type { NextAuthConfig } from "next-auth";
 
-const authConfig = {
+export const authConfig: NextAuthConfig = {
   providers: [
-    GitHub({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
-    }),
     Credentials({
       name: "Credentials",
       credentials: {
-        email: {},
-        password: {},
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" }
       },
-      async authorize(credentials) {
-        // TODO: implement your login logic
-        return null;
-      },
-    }),
-  ],
-};
+      authorize: async (credentials) => {
+        if (!credentials?.email) return null;
 
-export default authConfig;
+        return {
+          id: "TEMP-USER-ID",
+          email: credentials.email
+        };
+      }
+    })
+  ],
+
+  pages: {
+    signIn: "/login"
+  },
+
+  session: {
+    strategy: "jwt"
+  }
+};
