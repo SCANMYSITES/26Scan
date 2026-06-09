@@ -1,12 +1,14 @@
-import AdminHeader from "@/components/admin/AdminHeader";
-import AdminFooter from "@/components/admin/AdminFooter";
+import AdminSidebar from "@/components/admin/AdminSidebar";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div>
-      <AdminHeader />
-      <main style={{ padding: "20px" }}>{children}</main>
-      <AdminFooter />
+    <div className="flex">
+      <AdminSidebar />
+      <main className="flex-1 p-6">{children}</main>
     </div>
   );
 }

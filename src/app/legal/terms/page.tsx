@@ -1,37 +1,51 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import termsContent from "@/docs/terms.md";
+
+type Document = {
+  title: string;
+  slug: string;
+  content: string;
+  updated_at: string;
+};
 
 export default function TermsPage() {
   const [accepted, setAccepted] = useState(false);
+  const [doc, setDoc] = useState<Document | null>(null);
   const router = useRouter();
 
-  async function handleContinue() {
+  useEffect(() => {
+    async function loadDocument() {
+      const res = await fetch("/api/documents/terms");
+      if (!res.ok) return;
+      const data = await res.json();
+      setDoc(data);
+    }
+    loadDocument();
+  }, []);
+
+  function handleContinue() {
     if (!accepted) return;
-
-    const user_id = localStorage.getItem("user_id");
-
-    // TODO: Add your API call here if needed
-    // const res = await fetch("/api/accept-terms", { method: "POST", body: JSON.stringify({ user_id }) });
-    // const data = await res.json();
-
     router.push("/compliance/profile");
+  }
+
+  if (!doc) {
+    return <div className="p-6">Loading terms...</div>;
   }
 
   return (
     <div className="w-full flex justify-center">
       <div className="max-w-3xl w-full p-6">
-        <h1 className="text-3xl font-bold mb-4">
-          Terms and Conditions for Scanmysites
-        </h1>
+        <h1 className="text-3xl font-bold mb-4">{doc.title}</h1>
 
-        <p className="text-sm text-gray-600 mb-6">Last Updated: 01‑05‑2026</p>
+        <p className="text-sm text-gray-600 mb-6">
+          Last Updated: {new Date(doc.updated_at).toLocaleDateString()}
+        </p>
 
         <div
           className="prose max-w-none h-[70vh] overflow-y-auto pr-4"
-          dangerouslySetInnerHTML={{ __html: termsContent }}
+          dangerouslySetInnerHTML={{ __html: doc.content }}
         />
 
         <div className="mt-6 flex items-center gap-3">
