@@ -1,61 +1,41 @@
 import { NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { email, password, account_type, plan_id } = body;
+    const { email, password } = await req.json();
 
-    if (!email || !password || !account_type) {
+    if (!email || !password) {
       return NextResponse.json(
-        { error: "Missing required fields." },
+        { error: "Email and password are required" },
         { status: 400 }
       );
     }
 
-    // Check if email already exists
-    const existing = await sql`
-      SELECT id FROM users WHERE email = ${email}
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const result = await sql`
+      INSERT INTO users (email, password_hash)
+      VALUES (${email}, ${passwordHash})
+      RETURNING id;
     `;
 
-    if (existing.rowCount && existing.rowCount > 0) {
+    const userId = result.rows[0].id;
+
+    return NextResponse.json({ success: true, user_id: userId });
+  } catch (error: any) {
+    console.error("Error creating user:", error);
+
+    if (error.message.includes("unique_email")) {
       return NextResponse.json(
-        { error: "Email already registered." },
+        { error: "Email already exists" },
         { status: 409 }
       );
     }
 
-    // Hash password
-    const hashed = await bcrypt.hash(password, 10);
-
-    // Create user
-    const userResult = await sql`
-      INSERT INTO users (email, password_hash, account_type, plan_id)
-      VALUES (${email}, ${hashed}, ${account_type}, ${plan_id})
-      RETURNING id
-    `;
-
-    const user_id = userResult.rows[0].id;
-
-    // Create empty profile record
-    await sql`
-      INSERT INTO user_profile (user)
-      VALUES (${user_id})
-    `;
-
     return NextResponse.json(
-      {
-        success: true,
-        user_id,
-        message: "Account created successfully.",
-      },
-      { status: 201 }
-    );
-  } catch (err: any) {
-    console.error("Register error:", err);
-    return NextResponse.json(
-      { error: "Server error during registration." },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
