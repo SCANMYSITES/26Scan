@@ -1,15 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
 
 export async function GET(
-  _req: Request,
-  { params }: { params: { slug: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
 ) {
+  const { slug } = await params;
+
   try {
     const result = await sql`
       SELECT id, title, slug, content, original_file_url, original_file_type, updated_at
       FROM documents
-      WHERE slug = ${params.slug}
+      WHERE slug = ${slug}
       LIMIT 1;
     `;
 

@@ -1,16 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
 
 // GET a single document
 export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     const result = await sql`
       SELECT id, title, slug, content, original_file_url, original_file_type, updated_at
       FROM documents
-      WHERE id = ${params.id};
+      WHERE id = ${id};
     `;
 
     if (result.rows.length === 0) {
@@ -32,12 +34,14 @@ export async function GET(
 
 // UPDATE document
 export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     const { title, slug, content, original_file_url, original_file_type } =
-      await req.json();
+      await request.json();
 
     const result = await sql`
       UPDATE documents
@@ -47,7 +51,7 @@ export async function PUT(
           original_file_url = ${original_file_url},
           original_file_type = ${original_file_type},
           updated_at = NOW()
-      WHERE id = ${params.id}
+      WHERE id = ${id}
       RETURNING id, title, slug, updated_at;
     `;
 
@@ -63,13 +67,15 @@ export async function PUT(
 
 // DELETE document
 export async function DELETE(
-  _req: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     await sql`
       DELETE FROM documents
-      WHERE id = ${params.id};
+      WHERE id = ${id};
     `;
 
     return NextResponse.json({ success: true });
