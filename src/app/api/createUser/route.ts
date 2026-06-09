@@ -12,7 +12,6 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-
     // Hash password
     const passwordHash = await bcrypt.hash(password, 10);
 
@@ -22,7 +21,7 @@ export async function POST(req: Request) {
       VALUES (${email}, ${passwordHash})
       RETURNING id;
     `;
-
+    
     const userId = result.rows[0].id;
 
     return NextResponse.json({ success: true, user_id: userId });
