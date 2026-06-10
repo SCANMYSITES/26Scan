@@ -1,13 +1,5 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  turbopack: {},
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.md$/,
-      type: "asset/source",
-    });
-    return config;
-  },
-};
+const nextConfig = {};
 
 module.exports = nextConfig;
+
