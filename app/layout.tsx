@@ -1,11 +1,10 @@
-"use client";
-
 import "./globals.css";
 import type { ReactNode } from "react";
-import Header from "../components/Header";
+import Header from "@/components/admin/AdminHeader";
+import Sidebar from "@/components/dashboard/DashboardHeader";
 import { ToastProvider } from "@/components/Toast/ToastContext";
 import Toast from "@/components/Toast/Toast";
-import Sidebar from "../components/dashboard/DashboardHeader";
+
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   

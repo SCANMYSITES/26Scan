@@ -1,13 +1,33 @@
-const authConfig = {
+import GitHub from "next-auth/providers/github"
+import Google from "next-auth/providers/google"
+import Credentials from "next-auth/providers/credentials"
+import type { NextAuthConfig } from "next-auth"
+
+const authConfig: NextAuthConfig = {
   providers: [
-    // your providers
+    GitHub({
+      clientId: process.env.GITHUB_ID!,
+      clientSecret: process.env.GITHUB_SECRET!,
+    }),
+    Google({
+      clientId: process.env.GOOGLE_ID!,
+      clientSecret: process.env.GOOGLE_SECRET!,
+    }),
+    Credentials({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      authorize: async (credentials) => {
+        // Your custom login logic here
+        return null
+      },
+    }),
   ],
   pages: {
     signIn: "/login",
   },
-  session: {
-    strategy: "jwt",
-  },
-};
+}
 
-export default authConfig;
+export default authConfig

@@ -1,21 +1,19 @@
-import SidebarNav from "@/components/dashboard/SidebarNav";
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import DashboardFooter from "@/components/dashboard/DashboardFooter";
+import "./globals.css";
+import type { ReactNode } from "react";
+import { ToastProvider } from "@/components/Toast/ToastContext";
+import Toast from "@/components/Toast/Toast";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex">
-      <SidebarNav />
-
-      <div className="flex-1 flex flex-col min-h-screen bg-gray-50">
-        <DashboardHeader />
-
-        <main className="flex-1 p-6 overflow-y-auto">
-          {children}
-        </main>
-
-        <DashboardFooter />
-      </div>
-    </div>
+    <html lang="en">
+      <body className="bg-slate-950 text-slate-50">
+        <ToastProvider>
+          <div className="min-h-screen flex">
+            <main className="flex-grow">{children}</main>
+          </div>
+          <Toast />
+        </ToastProvider>
+      </body>
+    </html>
   );
 }
